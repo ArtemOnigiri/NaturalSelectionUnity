@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4044673794468007823}
   - component: {fileID: 3274056562804348409}
   - component: {fileID: 6080811766322707361}
-  - component: {fileID: -3834528354207805541}
+  - component: {fileID: 4142023635314307621}
   m_Layer: 0
   m_Name: m1
   m_TagString: Untagged
@@ -48,7 +48,6 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -60,7 +59,6 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -121,7 +119,7 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.78, y: 1.15}
   m_Direction: 0
---- !u!114 &-3834528354207805541
+--- !u!114 &4142023635314307621
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
