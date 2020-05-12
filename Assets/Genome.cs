@@ -14,7 +14,7 @@ public class Genome
     {
         weights = new float[size];
         skills = new int[skillCount];
-        for(int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++)
         {
             weights[i] = UnityEngine.Random.Range(-1f, 1f);
         }
@@ -30,16 +30,17 @@ public class Genome
 
     public void Mutate(float value)
     {
-        for(int i = 0; i < weights.Length; i++)
+        for (int i = 0; i < weights.Length; i++)
         {
-            if(UnityEngine.Random.value < 0.1) weights[i] += UnityEngine.Random.Range(-value, value);
+            if (UnityEngine.Random.value < 0.1) weights[i] += UnityEngine.Random.Range(-value, value);
         }
-        for(int i = 0; i < skillCount; i++)
+        for (int i = 0; i < skillCount; i++)
         {
-            if(UnityEngine.Random.value < 0.05) {
+            if (UnityEngine.Random.value < 0.05)
+            {
                 skills[i] = UnityEngine.Random.Range(0, 4);
             }
         }
     }
-    
+
 }

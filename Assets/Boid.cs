@@ -9,15 +9,29 @@ public class Boid : MonoBehaviour
 
 	public Vector3 target = new Vector3(0, 0, 0);
 
+    public bool IsStatic = false;
+    public bool Dying = false;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        if (!IsStatic)
+        {
+            rb.velocity += new Vector2(Random.Range(-100, 100), Random.Range(-100, 100));
+        }
+        if(Dying) Invoke("Die", 10f);
+    }
+
+    void Die()
+    {
+        Destroy(this.gameObject);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!IsStatic)
         transform.eulerAngles = new Vector3(0f, 0f, Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg - 90);
     }
 
@@ -49,8 +63,12 @@ public class Boid : MonoBehaviour
         // pz.Normalize();
         // target += pz * sign;
         target.Normalize();
-        rb.velocity += new Vector2(target.x, target.y);
-        rb.velocity *= 0.9f;
+        if (!IsStatic)
+        {
+            rb.velocity += new Vector2(target.x, target.y);
+            rb.velocity *= 0.9f;
+        }
+           
     }
 
 }

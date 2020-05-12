@@ -14,6 +14,8 @@ public class AI : MonoBehaviour
     public float energy = 10;
     public float age = 0;
 
+    public bool Antibiotics = false;
+
     private int inputsCount = 4;
     private Genome genome;
     private NN nn;
@@ -51,13 +53,13 @@ public class AI : MonoBehaviour
         }
         for (int i = 0; i < colliders.Length; i++)
         {
-            if(colliders[i].gameObject == gameObject) continue;
-            if(colliders[i].gameObject.name == "food")
+            if (colliders[i].gameObject == gameObject) continue;
+            if (colliders[i].gameObject.name == "food")
             {
                 neighboursCount[0]++;
                 vectors[0] += colliders[i].gameObject.transform.position - transform.position;
             }
-            else if(colliders[i].gameObject.name == "bacterium")
+            else if (colliders[i].gameObject.name == "bacterium")
             {
                 AI ai = colliders[i].gameObject.GetComponent<AI>();
                 neighboursCount[1] += ai.attackSkill / 3f;
@@ -70,7 +72,7 @@ public class AI : MonoBehaviour
         }
         for (int i = 0; i < 4; i++)
         {
-            if(neighboursCount[i] > 0)
+            if (neighboursCount[i] > 0)
             {
                 vectors[i] /= neighboursCount[i] * vision;
                 inputs[i] = vectors[i].magnitude;
@@ -85,26 +87,30 @@ public class AI : MonoBehaviour
         Vector2 target = new Vector2(0, 0);
         for (int i = 0; i < 4; i++)
         {
-            if(neighboursCount[i] > 0)
+            if (neighboursCount[i] > 0)
             {
                 Vector2 dir = new Vector2(vectors[i].x, vectors[i].y);
                 dir.Normalize();
                 target += dir * outputs[i];
             }
         }
-        if(target.magnitude > 1f) target.Normalize();
+        if (target.magnitude > 1f) target.Normalize();
         Vector2 velocity = rb.velocity;
         velocity += target * (0.25f + attackSkill * 0.05f);
         velocity *= 0.98f;
         rb.velocity = velocity;
         float antibiotics = 1f;
         // концентрация антибиотиков
-        // if(transform.position.x < -39) antibiotics = 4;
-        // else if(transform.position.x < -20) antibiotics = 3;
-        // else if(transform.position.x < -1) antibiotics = 2;
-        // antibiotics = Mathf.Max(1f, antibiotics - defSkill);
+        if (Antibiotics)
+        {
+            if (transform.position.x < -39) antibiotics = 4;
+            else if (transform.position.x < -20) antibiotics = 3;
+            else if (transform.position.x < -1) antibiotics = 2;
+            antibiotics = Mathf.Max(1f, antibiotics - defSkill);
+        }
+
         energy -= Time.deltaTime * antibiotics * antibiotics;
-        if(energy < 0f)
+        if (energy < 0f)
         {
             Kill();
         }
@@ -112,28 +118,37 @@ public class AI : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if(foodSkill == 0) return;
-        if(col.gameObject.name == "food")
+
+        if (col.gameObject.name == "food")
         {
+            if (foodSkill == 0) return;
             Eat(foodSkill);
             Destroy(col.gameObject);
         }
     }
 
+
     void OnCollisionEnter2D(Collision2D col)
     {
-        if(age < 1f) return;
-        if(attackSkill == 0) return;
-        if(col.gameObject.name == "bacterium")
+        if (col.gameObject.name == "food")
         {
+            if (foodSkill == 0) return;
+            Eat(foodSkill);
+            Destroy(col.gameObject);
+        }
+
+        if (col.gameObject.name == "bacterium")
+        {
+            if (age < 1f) return;
+            if (attackSkill == 0) return;
             AI ai = col.gameObject.GetComponent<AI>();
-            if(ai.age < 1f) return;
+            if (ai.age < 1f) return;
             float damage = Mathf.Max(0f, attackSkill - ai.defSkill);
             damage *= 4f;
             damage = Mathf.Min(damage, ai.energy);
             ai.energy -= damage * 1.25f;
             Eat(damage);
-            if(ai.energy == 0f) ai.Kill();
+            if (ai.energy == 0f) ai.Kill();
         }
     }
 
@@ -145,21 +160,22 @@ public class AI : MonoBehaviour
         for (int i = 0; i < Genome.skillCount; i++)
         {
             skillsTotal[g.skills[i]]++;
-            if(g.skills[i] == 0) {
+            if (g.skills[i] == 0)
+            {
                 foodSkill++;
                 col.g += 0.2f;
             }
-            else if(g.skills[i] == 1)
+            else if (g.skills[i] == 1)
             {
                 attackSkill++;
                 col.r += 0.25f;
             }
-            else if(g.skills[i] == 2)
+            else if (g.skills[i] == 2)
             {
                 defSkill++;
                 col.b += 0.25f;
             }
-            else if(g.skills[i] == 3)
+            else if (g.skills[i] == 3)
             {
                 size += 0.5f;
             }
@@ -195,7 +211,7 @@ public class AI : MonoBehaviour
     private void Eat(float food)
     {
         energy += food;
-        if(energy > 16)
+        if (energy > 16)
         {
             energy *= 0.5f;
             GameObject b = (GameObject)Object.Instantiate(Resources.Load("m1", typeof(GameObject)), new Vector3(0, 0, 0), Quaternion.identity);
